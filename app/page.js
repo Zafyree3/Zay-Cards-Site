@@ -8,7 +8,7 @@ export default function Home() {
   const [cardDetails, setCardDetails] = useState([]);
 
   const API_PATH = process.env.API_URL;
-  
+
 
   const getNotionData = async () => {
     
@@ -19,7 +19,7 @@ export default function Home() {
       .then(response => {
         setData(response.data.data);
       }).catch(error => {
-        console.log(error);
+        console.error(error);
       });
   };
 
@@ -33,7 +33,7 @@ export default function Home() {
     if (response.status === 200) {
       return response.data;
     } else {
-      console.log(response);
+      console.error(response);
     }
   };
 
@@ -58,10 +58,6 @@ export default function Home() {
 
     cardDetails();
   }, [data]);
-
-  useEffect(() => {
-    console.log(cardDetails);
-  }, [cardDetails]);
   
   return (
     <body className="w-full flex flex-col items-center bg-white">
