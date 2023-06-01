@@ -1,94 +1,98 @@
-import Image from 'next/image'
-import styles from './page.module.css'
+"use client";
+
+import { useEffect, useState } from "react";
+import Axios from "axios";
 
 export default function Home() {
+  const [data, setData] = useState([]);
+  const [cardDetails, setCardDetails] = useState([]);
+
+  const API_PATH = process.env.API_URL;
+  
+
+  const getNotionData = async () => {
+    
+    Axios.get( API_PATH + "/GetCardsDatabase", {headers: {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS"
+    }})
+      .then(response => {
+        setData(response.data.data);
+      }).catch(error => {
+        console.log(error);
+      });
+  };
+
+  const getCardDetails = async (id) => {
+
+    const response = await Axios.get( API_PATH + "/GetCardDetails", {
+      params: {
+        id: id
+      }
+    })
+    if (response.status === 200) {
+      return response.data;
+    } else {
+      console.log(response);
+    }
+  };
+
+  useEffect(() => {
+    getNotionData();
+  }, []);
+
+  useEffect(() => {
+    if (data.length === 0) {
+      return;
+    }
+
+    const cardDetails = async () => {
+      let cardDetails = [];
+      for (let i = 0; i < data.length; i++) {
+        const details = await getCardDetails(data[i]["Card ID"]);
+        details["Stock"] = data[i]["Stock"];
+        cardDetails.push(details);
+      }
+      setCardDetails(cardDetails);
+    }
+
+    cardDetails();
+  }, [data]);
+
+  useEffect(() => {
+    console.log(cardDetails);
+  }, [cardDetails]);
+  
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>app/page.js</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
+    <body className="w-full flex flex-col items-center bg-white">
+      <header className="w-full h-28 bg-gray-800 flex flex-row justify-center items-center">
+        <h1 className="text-white text-5xl font-bold">Card Shop</h1>
+      </header>
+      <main className="w-11/12 h-fit grid grid-cols-6 grid-rows-5 py-3 gap-5">
+        {cardDetails.map((card, index) => {
+          return (
+            <Card key={index} cardDetails={card} />
+          )
+        })}
+      </main>
+    </body>
+  );
+}
 
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
+function Card({ cardDetails }) {
 
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
+  let name = cardDetails["CharacterName"];
+  let rarity = cardDetails["Rarity"];
+  let image = cardDetails["ImageUrl"];
+  let stock = cardDetails["Stock"];
 
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore the Next.js 13 playground.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
+  return (
+    <main className="w-full aspect-card relative ">
+      <img src={image} alt={name} className="w-full h-full absolute z-0 object-cover" />
+      <div className="w-full h-[13%] bg-black/[70%] absolute bottom-0 left-0 p-1 flex flex-row items-center">
+        <h1 className="text-white text-2xl font-bold w-1/3 h-full leading-tight border-l-2 border-gray-300 flex flex-col justify-center items-center text-center">{rarity}</h1>
+        <h1 className="text-white text-base font-medium w-1/3 h-full leading-tight border-x-2 border-gray-300 flex flex-col justify-center items-center text-center">{name}</h1>
+        <h1 className="text-white text-lg font-medium w-1/3 h-full leading-tight border-r-2 border-gray-300 flex flex-col justify-center items-center text-center">{`${stock}\n`}<span className="text-sm"><i>left</i></span></h1>
       </div>
     </main>
   )
