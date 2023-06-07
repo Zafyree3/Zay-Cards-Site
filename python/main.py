@@ -23,9 +23,7 @@ top = int((height/2)-boxheight)
 right = int((width/2)+boxwidth)
 bottom = int((height/2)+boxheight)
 
-API_PATH = os.getenv("REACT_APP_API_URL")
-
-
+API_PATH = os.getenv("API_URL")
 
 def getImage():
 
@@ -93,15 +91,15 @@ def main():
     # cardID = getCardID()
     print("_"*30)
     Series = input("Series: ")
-    if Series == "quit" or Series == "exit" or Series == "q":
+    if Series.lower() == "quit" or Series.lower() == "exit" or Series.lower() == "q":
         exit()
-    elif Series == "custom" or Series == "c":
+    elif Series.lower() == "custom" or Series.lower() == "c":
         cardID = input("Card ID: ")
     else:
         Series = f"{int(Series):02d}"
 
         Wave = input("Wave: ")
-        if Wave == "none" or Wave == "n":
+        if Series.lower() == "none" or Series.lower() == "n":
             Wave = "00"
         Wave = f"{int(Wave):02d}"
 
@@ -112,7 +110,7 @@ def main():
 
         if Wave == "00":
             cardID = "NS-{}-{}".format(Series, CardNo)
-        elif Rarity == "none" or Rarity == "n":
+        elif Series.lower() == "none" or Series.lower() == "n":
             cardID = "NS-{}-M{}-{}".format(Series, Wave, CardNo)
         else:
             cardID = "NS-{}-M{}-{}-{}".format(Series, Wave, Rarity, CardNo)
