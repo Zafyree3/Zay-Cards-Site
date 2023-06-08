@@ -15,3 +15,17 @@ html {
   height: 100vh;
   width: 100vw;
 }
+
+.theme-blue {
+  --_color-primary : #2d5376;
+  --_color-secondary : #2d5376;
+  --_color-background : #fcfaf8;
+  --_color-text : #000000;
+}
+
+.theme-dark {
+  --_color-primary : #948e9f;
+  --_color-secondary : #6b615b;
+  --_color-background : #1d1f1d;
+  --_color-text : #ecefed;
+}
