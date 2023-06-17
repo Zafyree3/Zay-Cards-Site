@@ -17,10 +17,13 @@ html {
 }
 
 .theme-blue {
-  --_color-primary : #2d5376;
-  --_color-secondary : #2d5376;
-  --_color-background : #fcfaf8;
-  --_color-text : #000000;
+  --_color-primary : #3a4664;
+  --_color-secondary : #231519;
+  --_color-background : #eef4ec;
+  --_color-text : #172013;
+  --_color-card-background: #ffffff;
+  --_color-card-shadow: #0000004C;
+  --_color-card-shadowRGB: 0, 0, 0;
 }
 
 .theme-dark {
@@ -28,4 +31,7 @@ html {
   --_color-secondary : #6b615b;
   --_color-background : #1d1f1d;
   --_color-text : #ecefed;
+  --_color-card-background: #2a2c2a;
+  --_color-card-shadow: #ffffff4c;
+  --_color-card-shadowRGB: 255, 255, 255;
 }
