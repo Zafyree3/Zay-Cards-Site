@@ -11,19 +11,23 @@ import { themes, sets, rarities } from "./values";
 export default function Home() {
 	const [data, setData] = useState([]);
 	const [cardDetails, setCardDetails] = useState([]);
-	const [amountLoaded, setAmountLoaded] = useState(10);
+	const [amountLoaded, setAmountLoaded] = useState(12);
 	const [isLastCardIntersecting, setIsLastCardIntersecting] = useState(false);
 	const [theme, setTheme] = useState(
 		localStorage.getItem("theme") || "theme-blue"
 	);
 	const [revealSideNav, setRevealSideNav] = useState(false);
 	const [accordianPanel, setAccordianPanel] = useState(0);
-	const [filters, setFilters] = useState([]);
+	const [setFilter, setSetFilter] = useState([]);
+	const [rarityFilter, setRarityFilter] = useState([]);
+	const [seriesFilter, setSeriesFilter] = useState([]);
+	const [characterFilter, setCharacterFilter] = useState("");
+	const [cardNoFilter, setCardNoFilter] = useState("");
 
 	const sortedRarities = () => {
 		let selectedRarities = [];
 		for (let i = 0; i < rarities.length; i++) {
-			if (filters.includes(rarities[i])) {
+			if (rarityFilter.includes(rarities[i])) {
 				selectedRarities.push(rarities[i]);
 			}
 		}
@@ -119,7 +123,7 @@ export default function Home() {
 			},
 			{
 				root: null,
-				rootMargin: "200px",
+				rootMargin: "500px",
 				threshold: 1.0,
 			}
 		);
@@ -134,7 +138,7 @@ export default function Home() {
 	useEffect(() => {
 		// Load more cards
 		if (isLastCardIntersecting) {
-			setAmountLoaded(amountLoaded + 5);
+			setAmountLoaded(amountLoaded + 7);
 			setIsLastCardIntersecting(false);
 		}
 	}, [isLastCardIntersecting]);
@@ -152,7 +156,7 @@ export default function Home() {
 
 	useEffect(() => {
 		setRaritiesSorted(sortedRarities());
-	}, [filters]);
+	}, [rarityFilter]);
 
 	useEffect(() => {
 		// Set theme to local storage
@@ -285,16 +289,16 @@ export default function Home() {
 												</div>
 												<button
 													onClick={() => {
-														if (filters.includes(set)) {
-															setFilters(filters.filter((e) => e !== set));
+														if (setFilter.includes(set)) {
+															setSetFilter(setFilter.filter((e) => e !== set));
 														} else {
-															setFilters([...filters, set]);
+															setSetFilter([...setFilter, set]);
 														}
 													}}
 												>
 													<i
 														className={`bi ${
-															filters.includes(set)
+															setFilter.includes(set)
 																? "bi-check-square-fill"
 																: "bi-square"
 														} text-2xl/[0] text-primary`}
@@ -343,16 +347,18 @@ export default function Home() {
 												</div>
 												<button
 													onClick={() => {
-														if (filters.includes(rarity)) {
-															setFilters(filters.filter((e) => e !== rarity));
+														if (rarityFilter.includes(rarity)) {
+															setRarityFilter(
+																rarityFilter.filter((e) => e !== rarity)
+															);
 														} else {
-															setFilters([...filters, rarity]);
+															setRarityFilter([...rarityFilter, rarity]);
 														}
 													}}
 												>
 													<i
 														className={`bi ${
-															filters.includes(rarity)
+															rarityFilter.includes(rarity)
 																? "bi-check-square-fill"
 																: "bi-square"
 														} text-2xl/[0] text-primary`}
