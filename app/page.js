@@ -6,7 +6,8 @@ import "./globals.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import { Popover, RadioGroup, Combobox } from "@headlessui/react";
 import { ClickAwayListener } from "@mui/base";
-import { themes, sets, rarities } from "./values";
+import { themes, sets, rarities, series } from "./values";
+import * as Accordion from "@radix-ui/react-accordion";
 
 export default function Home() {
 	const [data, setData] = useState([]);
@@ -17,28 +18,29 @@ export default function Home() {
 		localStorage.getItem("theme") || "theme-blue"
 	);
 	const [revealSideNav, setRevealSideNav] = useState(false);
-	const [accordianPanel, setAccordianPanel] = useState(0);
 	const [setFilter, setSetFilter] = useState([]);
 	const [rarityFilter, setRarityFilter] = useState([]);
 	const [seriesFilter, setSeriesFilter] = useState([]);
 	const [characterFilter, setCharacterFilter] = useState("");
 	const [cardNoFilter, setCardNoFilter] = useState("");
 
-	const sortedRarities = () => {
-		let selectedRarities = [];
-		for (let i = 0; i < rarities.length; i++) {
-			if (rarityFilter.includes(rarities[i])) {
-				selectedRarities.push(rarities[i]);
+	const sortedArray = (array, arrayFilter) => {
+		let selectedItems = [];
+		for (let i = 0; i < array.length; i++) {
+			if (arrayFilter.includes(rarities[i])) {
+				selectedItems.push(rarities[i]);
 			}
 		}
-		if (selectedRarities.length === 0) return rarities;
+		if (selectedItems.length === 0) return array;
 		return [
-			...selectedRarities,
-			...rarities.filter((x) => !selectedRarities.includes(x)),
+			...selectedItems,
+			...array.filter((x) => !selectedItems.includes(x)),
 		];
 	};
 
-	const [raritiesSorted, setRaritiesSorted] = useState(sortedRarities());
+	const [raritiesSorted, setRaritiesSorted] = useState(
+		sortedArray(rarities, rarityFilter)
+	);
 
 	const observee = useRef(null);
 	const mainBody = useRef(null);
@@ -155,7 +157,7 @@ export default function Home() {
 	}, []);
 
 	useEffect(() => {
-		setRaritiesSorted(sortedRarities());
+		setRaritiesSorted(sortedArray(rarities, rarityFilter));
 	}, [rarityFilter]);
 
 	useEffect(() => {
@@ -245,133 +247,131 @@ export default function Home() {
 						revealSideNav ? "left-0" : "-left-1/4"
 					} top-28 z-10 rounded-br-lg border-b-3 border-r-3 border-primary bg-background text-text shadow-sideBar`}
 				>
-					<p className="h-18 w-full text-center text-3xl font-bold text-primary">
+					<p className="flex h-12 w-full flex-shrink-0 justify-center text-center text-3xl font-bold text-primary">
 						<i className="bi bi-funnel-fill mr-4 inline-block"></i>
 						Filter
 					</p>
-					<div
-						id="accordian"
-						className="flex h-full w-full flex-col items-start"
+					<Accordion.Root
+						className="flex h-sideBarContent w-full flex-col"
+						type="single"
+						collapsible
 					>
-						<div
-							id="accordian-panel"
-							className={`${
-								accordianPanel == 1 ? "mb-12 h-1/3" : " mb-0 h-1/15"
-							} w-full transition-accordian duration-500`}
+						<Accordion.Item
+							value="1"
+							className="flex flex-col gap-1 data-open:h-0 data-open:flex-auto"
 						>
-							<button
-								id="accordian-button"
-								className="flex w-full flex-row items-center justify-between"
-								onClick={() => setAccordianPanel((e) => (e == 1 ? 0 : 1))}
-							>
-								<p className="text-2xl font-bold text-primary">Set</p>
+							<Accordion.Trigger className="group flex flex-row items-center">
+								<p className="text-2xl font-bold text-primary">Series</p>
 								<i
-									className={`bi ${
-										accordianPanel == 1 ? "bi-chevron-up" : "bi-chevron-down"
-									} text-2xl/[0] text-primary`}
+									className={`bi bi-chevron-up ml-auto text-2xl/[0] text-primary transition-transform duration-400 group-data-open:rotate-180`}
 								></i>
-							</button>
-							<div
-								id="accordian-content"
-								className={`grid ${
-									accordianPanel == 1 ? "grid-rows-1" : "grid-rows-0"
-								} h-full w-full gap-2 overflow-hidden transition-template-rows duration-500`}
-							>
-								<div
-									id="accordian-inner"
-									className="h-full w-full overflow-hidden"
-								>
-									<div className="flex h-full flex-col gap-1 overflow-y-scroll">
-										{sets.map((set, index) => (
-											<div className="flex w-11/12 flex-row items-center justify-between">
-												<div className="flex flex-row items-center justify-between">
-													<p className="text-base text-primary">{set}</p>
-												</div>
-												<button
-													onClick={() => {
-														if (setFilter.includes(set)) {
-															setSetFilter(setFilter.filter((e) => e !== set));
-														} else {
-															setSetFilter([...setFilter, set]);
-														}
-													}}
-												>
-													<i
-														className={`bi ${
-															setFilter.includes(set)
-																? "bi-check-square-fill"
-																: "bi-square"
-														} text-2xl/[0] text-primary`}
-													></i>
-												</button>
-											</div>
-										))}
+							</Accordion.Trigger>
+							<Accordion.Content className="flex flex-col gap-1 overflow-y-scroll">
+								{sets.map((set, index) => (
+									<div className="flex h-fit w-11/12 flex-row items-center justify-between">
+										<div className="flex flex-row items-center justify-between">
+											<p className="text-base text-primary">{set}</p>
+										</div>
+										<button
+											onClick={() => {
+												if (setFilter.includes(set)) {
+													setSetFilter(setFilter.filter((e) => e !== set));
+												} else {
+													setSetFilter([...setFilter, set]);
+												}
+											}}
+										>
+											<i
+												className={`bi ${
+													setFilter.includes(set)
+														? "bi-check-square-fill"
+														: "bi-square"
+												} text-2xl/[0] text-primary`}
+											></i>
+										</button>
 									</div>
-								</div>
-								<hr className="w-full rounded-md border-t-1 border-text opacity-50"></hr>
-							</div>
-						</div>
-						<div
-							id="accordian-panel"
-							className={`${
-								accordianPanel == 2 ? "mb-12 h-1/3" : " mb-0 h-1/15"
-							} w-full transition-accordian duration-500`}
+								))}
+							</Accordion.Content>
+						</Accordion.Item>
+						<Accordion.Item
+							value="2"
+							className="flex flex-col gap-1 data-open:h-0 data-open:flex-auto"
 						>
-							<button
-								id="accordian-button"
-								className="flex w-full flex-row items-center justify-between"
-								onClick={() => setAccordianPanel((e) => (e == 2 ? 0 : 2))}
-							>
+							<Accordion.Trigger className="group flex flex-row items-center">
 								<p className="text-2xl font-bold text-primary">Rarity</p>
 								<i
-									className={`bi ${
-										accordianPanel == 2 ? "bi-chevron-up" : "bi-chevron-down"
-									} text-2xl/[0] text-primary`}
+									className={`bi bi-chevron-up ml-auto text-2xl/[0] text-primary transition-transform duration-400 group-data-open:rotate-180`}
 								></i>
-							</button>
-							<div
-								id="accordian-content"
-								className={`grid ${
-									accordianPanel == 2 ? "grid-rows-1" : "grid-rows-0"
-								} h-full w-full gap-2 transition-template-rows duration-500`}
-							>
-								<div
-									id="accordian-inner"
-									className="h-full w-full overflow-hidden"
-								>
-									<div className="flex h-full flex-col gap-1 overflow-y-scroll">
-										{raritiesSorted.map((rarity, index) => (
-											<div className="flex w-11/12 flex-row items-center justify-between">
-												<div className="flex flex-row items-center justify-between">
-													<p className="text-base text-primary">{rarity}</p>
-												</div>
-												<button
-													onClick={() => {
-														if (rarityFilter.includes(rarity)) {
-															setRarityFilter(
-																rarityFilter.filter((e) => e !== rarity)
-															);
-														} else {
-															setRarityFilter([...rarityFilter, rarity]);
-														}
-													}}
-												>
-													<i
-														className={`bi ${
-															rarityFilter.includes(rarity)
-																? "bi-check-square-fill"
-																: "bi-square"
-														} text-2xl/[0] text-primary`}
-													></i>
-												</button>
-											</div>
-										))}
+							</Accordion.Trigger>
+							<Accordion.Content className="flex flex-col gap-1 overflow-y-scroll">
+								{raritiesSorted.map((rarity, index) => (
+									<div className="flex h-fit w-11/12 flex-row items-center justify-between">
+										<div className="flex flex-row items-center justify-between">
+											<p className="text-base text-primary">{rarity}</p>
+										</div>
+										<button
+											onClick={() => {
+												if (rarityFilter.includes(rarity)) {
+													setRarityFilter(
+														rarityFilter.filter((e) => e !== rarity)
+													);
+												} else {
+													setRarityFilter([...rarityFilter, rarity]);
+												}
+											}}
+										>
+											<i
+												className={`bi ${
+													rarityFilter.includes(rarity)
+														? "bi-check-square-fill"
+														: "bi-square"
+												} text-2xl/[0] text-primary`}
+											></i>
+										</button>
 									</div>
-								</div>
-								<hr className="w-full rounded-md border-t-1 border-text opacity-50"></hr>
-							</div>
-						</div>
-					</div>
+								))}
+							</Accordion.Content>
+						</Accordion.Item>
+						<Accordion.Item
+							value="3"
+							className="flex flex-col gap-1 data-open:h-0 data-open:flex-auto"
+						>
+							<Accordion.Trigger className="group flex flex-row items-center">
+								<p className="text-2xl font-bold text-primary">Anime</p>
+								<i
+									className={`bi bi-chevron-up ml-auto text-2xl/[0] text-primary transition-transform duration-400 group-data-open:rotate-180`}
+								></i>
+							</Accordion.Trigger>
+							<Accordion.Content className="flex flex-col gap-1 overflow-y-scroll">
+								{animesSorted.map((anime, index) => (
+									<div className="flex h-fit w-11/12 flex-row items-center justify-between">
+										<div className="flex flex-row items-center justify-between">
+											<p className="text-base text-primary">{anime}</p>
+										</div>
+										<button
+											onClick={() => {
+												if (animeFilter.includes(anime)) {
+													setAnimeFilter(
+														animeFilter.filter((e) => e !== anime)
+													);
+												} else {
+													setAnimeFilter([...animeFilter, anime]);
+												}
+											}}
+										>
+											<i
+												className={`bi ${
+													animeFilter.includes(anime)
+														? "bi-check-square-fill"
+														: "bi-square"
+												} text-2xl/[0] text-primary`}
+											></i>
+										</button>
+									</div>
+								))}
+							</Accordion.Content>
+						</Accordion.Item>
+					</Accordion.Root>
 				</div>
 			</ClickAwayListener>
 			<main className="z-0 grid h-fit w-11/12 grid-cols-6 grid-rows-5 gap-5 py-3">

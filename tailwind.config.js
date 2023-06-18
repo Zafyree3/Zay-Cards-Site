@@ -1,4 +1,5 @@
 /** @type {import('tailwindcss').Config} */
+const plugin = require("tailwindcss/plugin");
 
 module.exports = {
 	content: [
@@ -33,8 +34,12 @@ module.exports = {
 			height: {
 				"1/9": "11.1111111111%",
 				"1/15": "6.6666666667%",
-				"1/15vh": "calc(100vh / 16)",
+				"1/15vh": "calc(100vh / 15)",
 				sideBar: "calc(100vh - 7rem)",
+				sideBarContent: "calc(100vh - 7rem - 3rem)",
+			},
+			flexBasis: {
+				"1/15": "6.6666666667%",
 			},
 			colors: {
 				primary: "var(--_color-primary)",
@@ -62,6 +67,12 @@ module.exports = {
 			gridTemplateRows: {
 				0: "0fr",
 				1: "1fr",
+			},
+			data: {
+				open: "state=open",
+			},
+			transitionDuration: {
+				400: "400ms",
 			},
 		},
 		plugins: [],
