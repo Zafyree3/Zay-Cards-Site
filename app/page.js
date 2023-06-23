@@ -33,14 +33,20 @@ export default function Home() {
 			}
 		}
 		if (query == "") {
-			if (selectedItems.length === 0) return array;
+			if (query == "") {
+				if (selectedItems.length === 0) return array;
+
+				return [
+					...selectedItems,
+					...array.filter((x) => !selectedItems.includes(x)),
+				];
+			}
 
 			return [
 				...selectedItems,
 				...array.filter((x) => !selectedItems.includes(x)),
 			];
 		}
-
 		return [
 			...selectedItems,
 			...array.filter((x) => !selectedItems.includes(x)),
@@ -50,8 +56,7 @@ export default function Home() {
 	const [raritiesSorted, setRaritiesSorted] = useState(
 		sortedArray(rarities, rarityFilter)
 	);
-
-	const [animeSorted, setAnimeSorted] = useState(
+	const [animeSorted, setAnimesSorted] = useState(
 		sortedArray(series, seriesFilter)
 	);
 
@@ -174,7 +179,7 @@ export default function Home() {
 	}, [rarityFilter]);
 
 	useEffect(() => {
-		setAnimeSorted(sortedArray(series, seriesFilter, seriesQuery));
+		setAnimesSorted(sortedArray(series, seriesFilter, seriesQuery));
 	}, [seriesFilter, seriesQuery]);
 
 	useEffect(() => {
@@ -283,7 +288,7 @@ export default function Home() {
 									className={`bi bi-chevron-up ml-auto text-2xl/[0] text-primary transition-transform duration-400 group-data-open:rotate-180`}
 								></i>
 							</Accordion.Trigger>
-							<Accordion.Content className="flex flex-col gap-1 overflow-y-scroll">
+							<Accordion.Content className="flex flex-col gap-1 overflow-x-hidden overflow-y-scroll">
 								{sets.map((set, index) => (
 									<div className="flex h-fit w-11/12 flex-row items-center justify-between">
 										<div className="flex flex-row items-center justify-between">
@@ -320,7 +325,7 @@ export default function Home() {
 									className={`bi bi-chevron-up ml-auto text-2xl/[0] text-primary transition-transform duration-400 group-data-open:rotate-180`}
 								></i>
 							</Accordion.Trigger>
-							<Accordion.Content className="flex flex-col gap-1 overflow-y-scroll">
+							<Accordion.Content className="flex flex-col gap-1 overflow-x-hidden overflow-y-scroll">
 								{raritiesSorted.map((rarity, index) => (
 									<>
 										<div className="flex h-fit w-11/12 flex-row items-center justify-between">
@@ -416,6 +421,54 @@ export default function Home() {
 										)}
 									</>
 								))}
+							</Accordion.Content>
+						</Accordion.Item>
+						<Accordion.Item
+							value="4"
+							className="flex flex-col gap-1 data-open:h-0 data-open:flex-auto"
+						>
+							<Accordion.Trigger className="group flex flex-row items-center">
+								<p className="text-2xl font-bold text-primary">Character</p>
+								<i
+									className={`bi bi-chevron-up ml-auto text-2xl/[0] text-primary transition-transform duration-400 group-data-open:rotate-180`}
+								></i>
+							</Accordion.Trigger>
+							<Accordion.Content className="flex flex-col gap-1">
+								<div className="flex w-11/12 flex-row items-center bg-card-bg">
+									<i className="bi bi-search mx-2 text-lg/[0] text-primary"></i>
+									<input
+										type="text"
+										className="h-10 w-full rounded-md bg-card-bg pr-2 text-base text-primary placeholder:placeholder-primary placeholder:opacity-50 focus:outline-none"
+										placeholder="Character"
+										onChange={(e) => {
+											setCharacterFilter(e.target.value);
+										}}
+									/>
+								</div>
+							</Accordion.Content>
+						</Accordion.Item>
+						<Accordion.Item
+							value="5"
+							className="flex flex-col gap-1 data-open:h-0 data-open:flex-auto"
+						>
+							<Accordion.Trigger className="group flex flex-row items-center">
+								<p className="text-2xl font-bold text-primary">Card No</p>
+								<i
+									className={`bi bi-chevron-up ml-auto text-2xl/[0] text-primary transition-transform duration-400 group-data-open:rotate-180`}
+								></i>
+							</Accordion.Trigger>
+							<Accordion.Content className="flex flex-col gap-1">
+								<div className="flex w-11/12 flex-row items-center bg-card-bg">
+									<i className="bi bi-search mx-2 text-lg/[0] text-primary"></i>
+									<input
+										type="text"
+										className="h-10 w-full rounded-md bg-card-bg pr-2 text-base text-primary placeholder:placeholder-primary placeholder:opacity-50 focus:outline-none"
+										placeholder="Card No"
+										onChange={(e) => {
+											setCardNoFilter(e.target.value);
+										}}
+									/>
+								</div>
 							</Accordion.Content>
 						</Accordion.Item>
 					</Accordion.Root>
