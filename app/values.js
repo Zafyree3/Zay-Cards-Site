@@ -18,6 +18,7 @@ export const sets = [
 	"NS-06",
 	"NS-07",
 	"NS-08",
+	"NS-09",
 	"NS-02-M01",
 	"NS-02-M02",
 	"NS-02-M03",
@@ -26,6 +27,7 @@ export const sets = [
 	"NS-02-M06",
 	"NS-02-M07",
 	"NS-02-M08",
+	"NS-02-M09",
 	"NS-05-M01",
 	"NS-05-M02",
 	"NS-05-M03",
@@ -36,6 +38,8 @@ export const sets = [
 	"NS-10-M02",
 	"NS-10-M03",
 	"NS-10-M04",
+	"NNS-01",
+	"NNS-02",
 ];
 
 export const rarities = [

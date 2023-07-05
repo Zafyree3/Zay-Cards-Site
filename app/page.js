@@ -11,6 +11,7 @@ import * as Accordion from "@radix-ui/react-accordion";
 
 export default function Home() {
 	const [data, setData] = useState([]);
+	const [filteredCards, setFilteredCards] = useState([]);
 	const [cardDetails, setCardDetails] = useState([]);
 	const [amountLoaded, setAmountLoaded] = useState(12);
 	const [isLastCardIntersecting, setIsLastCardIntersecting] = useState(false);
@@ -101,6 +102,25 @@ export default function Home() {
 		mainBody.current.classList = classes;
 	};
 
+	const filterCards = () => {
+		let tempData = [...cardDetails];
+		if (setFilter.length > 0) {
+			tempData = tempData.filter((card) => {
+				return setFilter.includes(card["SetNumber"]);
+			});
+		}
+		setFilteredCards(tempData);
+	};
+
+	const resetFilters = () => {
+		setSetFilter([]);
+		setRarityFilter([]);
+		setSeriesFilter([]);
+		setCharacterFilter("");
+		setCardNoFilter("");
+		setFilteredCards([...cardDetails]);
+	};
+
 	useEffect(() => {
 		// Get data from Notion
 		getNotionData(0, amountLoaded);
@@ -128,6 +148,10 @@ export default function Home() {
 
 		gettingDetailsByBatch();
 	}, [data]);
+
+	useEffect(() => {
+		setFilteredCards([...cardDetails]);
+	}, [cardDetails]);
 
 	useEffect(() => {
 		// Observe last card
@@ -372,11 +396,12 @@ export default function Home() {
 								></i>
 							</Accordion.Trigger>
 							<Accordion.Content className="flex flex-col gap-2 overflow-y-scroll">
-								<div className="flex w-11/12 flex-row items-center bg-card-bg pl-2">
-									<i className="bi bi-search text-center text-lg text-primary"></i>
+								<div className="mt-1 flex w-11/12 flex-row items-center rounded-md bg-primary pl-2">
+									<i className="bi bi-search text-center text-lg text-background"></i>
 									<input
 										type="text"
-										className="w-full px-3 py-2 text-lg text-primary focus:outline-none"
+										className="h-10 w-full rounded-md bg-primary px-2 text-base text-background placeholder:placeholder-primary placeholder:opacity-50 focus:outline-none"
+										placeholder="Search"
 										onChange={(e) => {
 											console.log(e.target.value);
 											setSeriesQuery(e.target.value);
@@ -425,7 +450,7 @@ export default function Home() {
 						</Accordion.Item>
 						<Accordion.Item
 							value="4"
-							className="flex flex-col gap-1 data-open:h-0 data-open:flex-auto"
+							className="flex flex-col gap-1 data-open:h-0 data-open:h-auto data-open:gap-2"
 						>
 							<Accordion.Trigger className="group flex flex-row items-center">
 								<p className="text-2xl font-bold text-primary">Character</p>
@@ -434,11 +459,11 @@ export default function Home() {
 								></i>
 							</Accordion.Trigger>
 							<Accordion.Content className="flex flex-col gap-1">
-								<div className="flex w-11/12 flex-row items-center bg-card-bg">
-									<i className="bi bi-search mx-2 text-lg/[0] text-primary"></i>
+								<div className="flex w-11/12 flex-row items-center rounded-md bg-primary pl-2">
+									<i className="bi bi-search text-center text-lg text-background"></i>
 									<input
 										type="text"
-										className="h-10 w-full rounded-md bg-card-bg pr-2 text-base text-primary placeholder:placeholder-primary placeholder:opacity-50 focus:outline-none"
+										className="h-10 w-full rounded-md bg-primary px-2 text-base text-background placeholder:placeholder-primary placeholder:opacity-50 focus:outline-none"
 										placeholder="Character"
 										onChange={(e) => {
 											setCharacterFilter(e.target.value);
@@ -449,7 +474,7 @@ export default function Home() {
 						</Accordion.Item>
 						<Accordion.Item
 							value="5"
-							className="flex flex-col gap-1 data-open:h-0 data-open:flex-auto"
+							className="flex flex-col gap-1 data-open:h-0 data-open:h-auto"
 						>
 							<Accordion.Trigger className="group flex flex-row items-center">
 								<p className="text-2xl font-bold text-primary">Card No</p>
@@ -458,11 +483,11 @@ export default function Home() {
 								></i>
 							</Accordion.Trigger>
 							<Accordion.Content className="flex flex-col gap-1">
-								<div className="flex w-11/12 flex-row items-center bg-card-bg">
-									<i className="bi bi-search mx-2 text-lg/[0] text-primary"></i>
+								<div className="flex w-11/12 flex-row items-center rounded-md bg-primary pl-2">
+									<i className="bi bi-search text-center text-lg text-background"></i>
 									<input
 										type="text"
-										className="h-10 w-full rounded-md bg-card-bg pr-2 text-base text-primary placeholder:placeholder-primary placeholder:opacity-50 focus:outline-none"
+										className="h-10 w-full rounded-md bg-primary px-2 text-base text-background placeholder:placeholder-primary placeholder:opacity-50 focus:outline-none"
 										placeholder="Card No"
 										onChange={(e) => {
 											setCardNoFilter(e.target.value);
@@ -472,16 +497,42 @@ export default function Home() {
 							</Accordion.Content>
 						</Accordion.Item>
 					</Accordion.Root>
+
+					<div className="flex h-12 w-11/12 flex-row gap-2">
+						<button
+							className="h-full w-1/2 rounded-md bg-primary text-lg font-bold text-background focus:outline-none"
+							onClick={() => {
+								filterCards();
+							}}
+						>
+							Filter
+						</button>
+						<button
+							className="h-full w-1/2 rounded-md bg-primary text-lg font-bold text-background focus:outline-none disabled:opacity-50"
+							onClick={() => {
+								resetFilters();
+							}}
+							disabled={
+								seriesFilter.length === 0 &&
+								characterFilter === "" &&
+								cardNoFilter === "" &&
+								rarityFilter.length === 0 &&
+								setFilter.length === 0
+							}
+						>
+							Reset
+						</button>
+					</div>
 				</div>
 			</ClickAwayListener>
 			<main className="z-0 grid h-fit w-11/12 grid-cols-6 grid-rows-5 gap-5 py-3">
-				{data.map((_, index) => {
-					return index === amountLoaded - 1 ? (
+				{filteredCards.map((card, index) => {
+					return index === filteredCards.length - 1 ? (
 						<div ref={observee}>
-							<Card key={index} cardDetails={cardDetails[index]} />
+							<Card key={index} cardDetails={card} />
 						</div>
 					) : (
-						<Card key={index} cardDetails={cardDetails[index]} />
+						<Card key={index} cardDetails={card} />
 					);
 				})}
 			</main>
