@@ -32,6 +32,7 @@ module.exports = {
 				"1/2vw": "calc(100vw / 2)",
 				"1/4vw": "calc(100vw / 4)",
 				"1/3vw": "calc(100vw / 4)",
+				"1/5vw": "calc(100vw / 5)",
 				"2/3vw": "calc(100vw / 3 * 2)",
 			},
 			height: {
