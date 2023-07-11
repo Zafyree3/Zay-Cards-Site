@@ -104,11 +104,33 @@ export default function Home() {
 
 	const filterCards = () => {
 		let tempData = [...cardDetails];
+
 		if (setFilter.length > 0) {
 			tempData = tempData.filter((card) => {
 				return setFilter.includes(card["SetNumber"]);
 			});
 		}
+		if (rarityFilter.length > 0) {
+			tempData = tempData.filter((card) => {
+				return rarityFilter.includes(card["Rarity"]);
+			});
+		}
+		if (seriesFilter.length > 0) {
+			tempData = tempData.filter((card) => {
+				return seriesFilter.includes(card["Series"]);
+			});
+		}
+		if (characterFilter !== "") {
+			tempData = tempData.filter((card) => {
+				return card["Character"].toLowerCase().includes(characterFilter);
+			});
+		}
+		if (cardNoFilter !== "") {
+			tempData = tempData.filter((card) => {
+				return card["CardNo"].toLowerCase().includes(cardNoFilter);
+			});
+		}
+
 		setFilteredCards(tempData);
 	};
 
@@ -167,7 +189,7 @@ export default function Home() {
 			},
 			{
 				root: null,
-				rootMargin: "500px",
+				rootMargin: "100px",
 				threshold: 1.0,
 			}
 		);
@@ -177,13 +199,18 @@ export default function Home() {
 		return () => {
 			observer.disconnect();
 		};
-	}, [observee, cardDetails]);
+	}, [observee]);
 
 	useEffect(() => {
 		// Load more cards
 		if (isLastCardIntersecting) {
-			setAmountLoaded(amountLoaded + 7);
 			setIsLastCardIntersecting(false);
+
+			if (amountLoaded > cardDetails.length) {
+				return;
+			}
+
+			setAmountLoaded(amountLoaded + 7);
 		}
 	}, [isLastCardIntersecting]);
 
@@ -217,13 +244,13 @@ export default function Home() {
 			ref={mainBody}
 			className="theme-blue flex w-full flex-col items-center bg-background"
 		>
-			<header className="z-20 flex h-28 w-full flex-row items-center justify-evenly bg-primary">
-				<div className="relative flex h-auto gap-2">
+			<header className="relative z-20 flex h-28 w-full flex-row items-center justify-evenly bg-primary">
+				<div className="md:left-50 relative flex h-auto w-auto gap-2 md:absolute md:bottom-4 md:left-1/2 md:w-11/12 md:-translate-x-1/2">
 					<Popover className="relative">
 						<Popover.Button className="aspect-square rounded-md p-2 outline outline-1 outline-white">
-							<i className="bi bi-palette2 inline-block text-xl/[0] text-white"></i>
+							<i className="bi bi-palette2 inline-block text-xl/[0] text-white md:text-2xl/[0]"></i>
 						</Popover.Button>
-						<Popover.Panel className="absolute mt-3 w-2/3vw rounded-md bg-white p-3 shadow-popup">
+						<Popover.Panel className="absolute mt-3 w-2/3vw rounded-md bg-white p-3 shadow-popup md:w-1/3vw lg:w-1/4vw">
 							<RadioGroup
 								value={theme}
 								onChange={setTheme}
@@ -269,7 +296,7 @@ export default function Home() {
 						id="filter-button"
 					>
 						<i
-							className="bi bi-funnel-fill inline-block text-xl/[0] text-white"
+							className="bi bi-funnel-fill inline-block text-xl/[0] text-white md:text-2xl/[0]"
 							id="filter-button"
 						></i>
 					</button>
@@ -286,7 +313,7 @@ export default function Home() {
 				}}
 			>
 				<div
-					className={`absolute flex h-sideBar w-full flex-col px-7 py-4 transition-position duration-1000 ${
+					className={`absolute flex h-sideBar w-full flex-col px-7 py-4 transition-position duration-1000 md:w-1/2 lg:w-1/3 ${
 						revealSideNav ? "left-0" : "-left-full"
 					} top-28 z-10 rounded-br-lg border-b-3 border-r-3 border-primary bg-background text-text shadow-sideBar`}
 				>
@@ -397,7 +424,7 @@ export default function Home() {
 									<i className="bi bi-search text-center text-lg text-background"></i>
 									<input
 										type="text"
-										className="h-10 w-full rounded-md bg-primary px-2 text-base text-background placeholder:placeholder-primary placeholder:opacity-50 focus:outline-none"
+										className="h-10 w-full rounded-md bg-primary px-2 text-base text-background placeholder:text-background placeholder:opacity-50 focus:outline-none"
 										placeholder="Search"
 										onChange={(e) => {
 											console.log(e.target.value);
@@ -447,7 +474,7 @@ export default function Home() {
 						</Accordion.Item>
 						<Accordion.Item
 							value="4"
-							className="flex flex-col gap-1 data-open:h-0 data-open:h-auto data-open:gap-2"
+							className="flex flex-col gap-1 data-open:h-auto data-open:gap-2"
 						>
 							<Accordion.Trigger className="group flex flex-row items-center">
 								<p className="text-2xl font-bold text-primary">Character</p>
@@ -460,7 +487,7 @@ export default function Home() {
 									<i className="bi bi-search text-center text-lg text-background"></i>
 									<input
 										type="text"
-										className="h-10 w-full rounded-md bg-primary px-2 text-base text-background placeholder:placeholder-primary placeholder:opacity-50 focus:outline-none"
+										className="h-10 w-full rounded-md bg-primary px-2 text-base text-background placeholder:text-background placeholder:opacity-50 focus:outline-none"
 										placeholder="Character"
 										onChange={(e) => {
 											setCharacterFilter(e.target.value);
@@ -471,7 +498,7 @@ export default function Home() {
 						</Accordion.Item>
 						<Accordion.Item
 							value="5"
-							className="flex flex-col gap-1 data-open:h-0 data-open:h-auto"
+							className="flex flex-col gap-1 data-open:h-auto"
 						>
 							<Accordion.Trigger className="group flex flex-row items-center">
 								<p className="text-2xl font-bold text-primary">Card No</p>
@@ -484,7 +511,7 @@ export default function Home() {
 									<i className="bi bi-search text-center text-lg text-background"></i>
 									<input
 										type="text"
-										className="h-10 w-full rounded-md bg-primary px-2 text-base text-background placeholder:placeholder-primary placeholder:opacity-50 focus:outline-none"
+										className="h-10 w-full rounded-md bg-primary px-2 text-base text-background placeholder:text-background placeholder:opacity-50 focus:outline-none"
 										placeholder="Card No"
 										onChange={(e) => {
 											setCardNoFilter(e.target.value);
@@ -524,15 +551,10 @@ export default function Home() {
 			</ClickAwayListener>
 			<main className="z-0 grid h-fit w-11/12 grid-cols-2 grid-rows-5 gap-5 py-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
 				{filteredCards.map((card, index) => {
-					return index === filteredCards.length - 1 ? (
-						<div ref={observee}>
-							<Card key={index} cardDetails={card} />
-						</div>
-					) : (
-						<Card key={index} cardDetails={card} />
-					);
+					return <Card key={index} cardDetails={card} />;
 				})}
 			</main>
+			<div className="block" ref={observee}></div>
 		</body>
 	);
 }
