@@ -8,6 +8,7 @@ import { Popover, RadioGroup, Combobox } from "@headlessui/react";
 import { ClickAwayListener } from "@mui/base";
 import { themes, sets, rarities, series } from "./values";
 import * as Accordion from "@radix-ui/react-accordion";
+import e from "cors";
 
 export default function Home() {
 	const [data, setData] = useState([]);
@@ -27,6 +28,7 @@ export default function Home() {
 	const [seriesQuery, setSeriesQuery] = useState("");
 	const [characterFilter, setCharacterFilter] = useState("");
 	const [cardNoFilter, setCardNoFilter] = useState("");
+	const inputs = useRef();
 
 	const sortedArray = (array, arrayFilter, query = "") => {
 		let selectedItems = [];
@@ -36,14 +38,7 @@ export default function Home() {
 			}
 		}
 		if (query == "") {
-			if (query == "") {
-				if (selectedItems.length === 0) return array;
-
-				return [
-					...selectedItems,
-					...array.filter((x) => !selectedItems.includes(x)),
-				];
-			}
+			if (selectedItems.length === 0) return array;
 
 			return [
 				...selectedItems,
@@ -52,8 +47,10 @@ export default function Home() {
 		}
 		return [
 			...selectedItems,
-			...array.filter((x) => !selectedItems.includes(x)),
-		].filter((x) => x.toLowerCase().includes(query.toLowerCase()));
+			...array
+				.filter((x) => !selectedItems.includes(x))
+				.filter((x) => x.toLowerCase().includes(query.toLowerCase())),
+		];
 	};
 
 	const [raritiesSorted, setRaritiesSorted] = useState(
@@ -119,17 +116,19 @@ export default function Home() {
 		}
 		if (seriesFilter.length > 0) {
 			tempData = tempData.filter((card) => {
-				return seriesFilter.includes(card["Series"]);
+				return seriesFilter.includes(card["SeriesName"]);
 			});
 		}
 		if (characterFilter !== "") {
 			tempData = tempData.filter((card) => {
-				return card["Character"].toLowerCase().includes(characterFilter);
+				return card["CharacterName"]
+					.toLowerCase()
+					.includes(characterFilter.toLowerCase());
 			});
 		}
 		if (cardNoFilter !== "") {
 			tempData = tempData.filter((card) => {
-				return card["CardNo"].toLowerCase().includes(cardNoFilter);
+				return card["ID"].toLowerCase().includes(cardNoFilter.toLowerCase());
 			});
 		}
 
@@ -142,6 +141,7 @@ export default function Home() {
 		setSeriesFilter([]);
 		setCharacterFilter("");
 		setCardNoFilter("");
+		inputs.current.value = "";
 		setFilteredCards([...cardDetails]);
 	};
 
@@ -174,7 +174,7 @@ export default function Home() {
 	}, [data]);
 
 	useEffect(() => {
-		setFilteredCards([...cardDetails]);
+		filterCards();
 	}, [cardDetails]);
 
 	useEffect(() => {
@@ -183,18 +183,12 @@ export default function Home() {
 			return;
 		}
 
-		const observer = new IntersectionObserver(
-			([entry]) => {
-				if (entry.intersectionRatio > 0) {
-					setIsLastCardIntersecting(true);
-				}
-			},
-			{
-				root: null,
-				rootMargin: "0px",
-				threshold: 1.0,
+		const observer = new IntersectionObserver(([entry]) => {
+			if (entry.intersectionRatio > 0) {
+				console.log("Last card intersecting");
+				setIsLastCardIntersecting(true);
 			}
-		);
+		});
 
 		observer.observe(observee.current);
 
@@ -206,11 +200,14 @@ export default function Home() {
 	useEffect(() => {
 		// Load more cards
 		if (isLastCardIntersecting) {
+			console.log("ran");
 			setIsLastCardIntersecting(false);
 
 			if (amountLoaded > cardDetails.length) {
 				return;
 			}
+
+			console.log("Loading more cards");
 
 			setAmountLoaded(amountLoaded + 7);
 		}
@@ -440,6 +437,8 @@ export default function Home() {
 											console.log(e.target.value);
 											setSeriesQuery(e.target.value);
 										}}
+										id="AnimeSearch"
+										ref={inputs}
 									></input>
 								</div>
 								<hr className="my-1 w-11/12 border-primary" />
@@ -469,11 +468,7 @@ export default function Home() {
 												></i>
 											</button>
 										</div>
-										{index ===
-										seriesFilter.filter((x) =>
-											x.toLowerCase().includes(seriesQuery.toLowerCase())
-										).length -
-											1 ? (
+										{index === seriesFilter.length - 1 ? (
 											<hr className="my-1 w-11/12 border-primary" />
 										) : (
 											<></>
@@ -502,6 +497,8 @@ export default function Home() {
 										onChange={(e) => {
 											setCharacterFilter(e.target.value);
 										}}
+										id="CharacterSearch"
+										ref={inputs}
 									/>
 								</div>
 							</Accordion.Content>
@@ -526,6 +523,8 @@ export default function Home() {
 										onChange={(e) => {
 											setCardNoFilter(e.target.value);
 										}}
+										id="CardNoSearch"
+										ref={inputs}
 									/>
 								</div>
 							</Accordion.Content>
