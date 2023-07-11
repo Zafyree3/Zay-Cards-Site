@@ -16,7 +16,9 @@ export default function Home() {
 	const [amountLoaded, setAmountLoaded] = useState(12);
 	const [isLastCardIntersecting, setIsLastCardIntersecting] = useState(false);
 	const [theme, setTheme] = useState(
-		localStorage.getItem("theme") || "theme-blue"
+		typeof window !== "undefined"
+			? localStorage.getItem("theme") || "theme-blue"
+			: ""
 	);
 	const [revealSideNav, setRevealSideNav] = useState(false);
 	const [setFilter, setSetFilter] = useState([]);
@@ -216,12 +218,18 @@ export default function Home() {
 
 	useEffect(() => {
 		// Get theme from local storage
-		const theme = localStorage.getItem("theme");
-		if (theme === null) {
-			localStorage.setItem("theme", "theme-blue");
+		let browserTheme;
+
+		if (typeof window !== "undefined") {
+			browserTheme = localStorage.getItem("theme");
+		}
+		if (browserTheme === null) {
+			if (typeof window !== "undefined") {
+				localStorage.setItem("theme", "theme-blue");
+			}
 		} else {
 			// mainBody.current.classList.replace(RegExp('/(?:^|\s)theme-(?:\w*)'), theme);
-			setWebsiteTheme(theme);
+			setWebsiteTheme(browserTheme);
 		}
 	}, []);
 
@@ -235,52 +243,54 @@ export default function Home() {
 
 	useEffect(() => {
 		// Set theme to local storage
-		localStorage.setItem("theme", theme);
+		if (typeof window !== "undefined") {
+			localStorage.setItem("theme", theme);
+		}
 		setWebsiteTheme(theme);
 	}, [theme]);
 
 	return (
 		<body
 			ref={mainBody}
-			className="theme-blue flex w-full flex-col items-center bg-background"
+			className="theme-blue bg-background flex w-full flex-col items-center"
 		>
-			<header className="relative z-20 flex h-28 w-full flex-row items-center justify-evenly bg-primary">
+			<header className="bg-primary relative z-20 flex h-28 w-full flex-row items-center justify-evenly">
 				<div className="md:left-50 relative flex h-auto w-auto gap-2 md:absolute md:bottom-4 md:left-1/2 md:w-11/12 md:-translate-x-1/2">
 					<Popover className="relative">
 						<Popover.Button className="aspect-square rounded-md p-2 outline outline-1 outline-white">
 							<i className="bi bi-palette2 inline-block text-xl/[0] text-white md:text-2xl/[0]"></i>
 						</Popover.Button>
-						<Popover.Panel className="absolute mt-3 w-2/3vw rounded-md bg-white p-3 shadow-popup md:w-1/3vw lg:w-1/4vw">
+						<Popover.Panel className="w-2/3vw shadow-popup md:w-1/3vw lg:w-1/4vw absolute mt-3 rounded-md bg-white p-3">
 							<RadioGroup
 								value={theme}
 								onChange={setTheme}
 								className="flex flex-col gap-4"
 							>
-								<RadioGroup.Label className="md-1 text-center text-lg font-bold text-primary">
+								<RadioGroup.Label className="md-1 text-primary text-center text-lg font-bold">
 									Themes
 								</RadioGroup.Label>
 								{themes.map((theme) => (
 									<RadioGroup.Option
 										key={theme.name}
 										value={theme.value}
-										className={`${theme.value} flex h-1/10vh flex-row rounded-sm bg-background px-3 py-1 outline outline-2 outline-offset-1 outline-primary`}
+										className={`${theme.value} h-1/10vh bg-background outline-primary flex flex-row rounded-sm px-3 py-1 outline outline-2 outline-offset-1`}
 									>
 										{({ checked }) => (
 											<>
 												<div className="flex h-full w-2/3 flex-col items-start justify-center">
-													<p className="text-lg font-bold text-primary">
+													<p className="text-primary text-lg font-bold">
 														{theme.name}
 													</p>
-													<p className="text-sm font-light text-text">
+													<p className="text-text text-sm font-light">
 														Text Example
 													</p>
 												</div>
-												<div className="h-full w-1 bg-secondary"></div>
+												<div className="bg-secondary h-full w-1"></div>
 												<div className="flex flex-1 items-center justify-center">
 													{checked ? (
-														<i className="bi bi-circle-fill text-2xl/[0] text-primary"></i>
+														<i className="bi bi-circle-fill text-primary text-2xl/[0]"></i>
 													) : (
-														<i className="bi bi-circle text-2xl/[0] text-primary"></i>
+														<i className="bi bi-circle text-primary text-2xl/[0]"></i>
 													)}
 												</div>
 											</>
@@ -313,34 +323,34 @@ export default function Home() {
 				}}
 			>
 				<div
-					className={`absolute flex h-sideBar w-full flex-col px-7 py-4 transition-position duration-1000 md:w-1/2 lg:w-1/3 ${
+					className={`h-sideBar transition-position absolute flex w-full flex-col px-7 py-4 duration-1000 md:w-1/2 lg:w-1/3 ${
 						revealSideNav ? "left-0" : "-left-full"
-					} top-28 z-10 rounded-br-lg border-b-3 border-r-3 border-primary bg-background text-text shadow-sideBar`}
+					} border-b-3 border-r-3 border-primary bg-background text-text shadow-sideBar top-28 z-10 rounded-br-lg`}
 				>
-					<p className="flex h-12 w-full flex-shrink-0 justify-center text-center text-3xl font-bold text-primary">
+					<p className="text-primary flex h-12 w-full flex-shrink-0 justify-center text-center text-3xl font-bold">
 						<i className="bi bi-funnel-fill mr-4 inline-block"></i>
 						Filter
 					</p>
 					<Accordion.Root
-						className="flex h-sideBarContent w-full flex-col gap-2"
+						className="h-sideBarContent flex w-full flex-col gap-2"
 						type="single"
 						collapsible
 					>
 						<Accordion.Item
 							value="1"
-							className="flex flex-col gap-1 data-open:h-0 data-open:flex-auto"
+							className="data-open:h-0 data-open:flex-auto flex flex-col gap-1"
 						>
 							<Accordion.Trigger className="group flex flex-row items-center">
-								<p className="text-2xl font-bold text-primary">Series</p>
+								<p className="text-primary text-2xl font-bold">Series</p>
 								<i
-									className={`bi bi-chevron-up ml-auto text-2xl/[0] text-primary transition-transform duration-400 group-data-open:rotate-180`}
+									className={`bi bi-chevron-up text-primary duration-400 group-data-open:rotate-180 ml-auto text-2xl/[0] transition-transform`}
 								></i>
 							</Accordion.Trigger>
 							<Accordion.Content className="flex flex-col gap-1 overflow-x-hidden overflow-y-scroll">
 								{sets.map((set, index) => (
 									<div className="flex h-fit w-11/12 flex-row items-center justify-between">
 										<div className="flex flex-row items-center justify-between">
-											<p className="text-base text-primary">{set}</p>
+											<p className="text-primary text-base">{set}</p>
 										</div>
 										<button
 											onClick={() => {
@@ -356,7 +366,7 @@ export default function Home() {
 													setFilter.includes(set)
 														? "bi-check-square-fill"
 														: "bi-square"
-												} text-2xl/[0] text-primary`}
+												} text-primary text-2xl/[0]`}
 											></i>
 										</button>
 									</div>
@@ -365,12 +375,12 @@ export default function Home() {
 						</Accordion.Item>
 						<Accordion.Item
 							value="2"
-							className="flex flex-col gap-1 data-open:h-0 data-open:flex-auto"
+							className="data-open:h-0 data-open:flex-auto flex flex-col gap-1"
 						>
 							<Accordion.Trigger className="group flex flex-row items-center">
-								<p className="text-2xl font-bold text-primary">Rarity</p>
+								<p className="text-primary text-2xl font-bold">Rarity</p>
 								<i
-									className={`bi bi-chevron-up ml-auto text-2xl/[0] text-primary transition-transform duration-400 group-data-open:rotate-180`}
+									className={`bi bi-chevron-up text-primary duration-400 group-data-open:rotate-180 ml-auto text-2xl/[0] transition-transform`}
 								></i>
 							</Accordion.Trigger>
 							<Accordion.Content className="flex flex-col gap-1 overflow-x-hidden overflow-y-scroll">
@@ -378,7 +388,7 @@ export default function Home() {
 									<>
 										<div className="flex h-fit w-11/12 flex-row items-center justify-between">
 											<div className="flex flex-row items-center justify-between">
-												<p className="text-base text-primary">{rarity}</p>
+												<p className="text-primary text-base">{rarity}</p>
 											</div>
 											<button
 												onClick={() => {
@@ -396,12 +406,12 @@ export default function Home() {
 														rarityFilter.includes(rarity)
 															? "bi-check-square-fill"
 															: "bi-square"
-													} text-2xl/[0] text-primary`}
+													} text-primary text-2xl/[0]`}
 												></i>
 											</button>
 										</div>
 										{index === rarityFilter.length - 1 ? (
-											<hr className="my-1 w-11/12 border-primary" />
+											<hr className="border-primary my-1 w-11/12" />
 										) : (
 											<></>
 										)}
@@ -411,20 +421,20 @@ export default function Home() {
 						</Accordion.Item>
 						<Accordion.Item
 							value="3"
-							className="flex flex-col gap-1 data-open:h-0 data-open:flex-auto"
+							className="data-open:h-0 data-open:flex-auto flex flex-col gap-1"
 						>
 							<Accordion.Trigger className="group flex flex-row items-center">
-								<p className="text-2xl font-bold text-primary">Anime</p>
+								<p className="text-primary text-2xl font-bold">Anime</p>
 								<i
-									className={`bi bi-chevron-up ml-auto text-2xl/[0] text-primary transition-transform duration-400 group-data-open:rotate-180`}
+									className={`bi bi-chevron-up text-primary duration-400 group-data-open:rotate-180 ml-auto text-2xl/[0] transition-transform`}
 								></i>
 							</Accordion.Trigger>
 							<Accordion.Content className="flex flex-col gap-2 overflow-y-scroll">
-								<div className="mt-1 flex w-11/12 flex-row items-center rounded-md bg-primary pl-2">
-									<i className="bi bi-search text-center text-lg text-background"></i>
+								<div className="bg-primary mt-1 flex w-11/12 flex-row items-center rounded-md pl-2">
+									<i className="bi bi-search text-background text-center text-lg"></i>
 									<input
 										type="text"
-										className="h-10 w-full rounded-md bg-primary px-2 text-base text-background placeholder:text-background placeholder:opacity-50 focus:outline-none"
+										className="bg-primary text-background placeholder:text-background h-10 w-full rounded-md px-2 text-base placeholder:opacity-50 focus:outline-none"
 										placeholder="Search"
 										onChange={(e) => {
 											console.log(e.target.value);
@@ -432,12 +442,12 @@ export default function Home() {
 										}}
 									></input>
 								</div>
-								<hr className="my-1 w-11/12 border-primary" />
+								<hr className="border-primary my-1 w-11/12" />
 								{animeSorted.map((anime, index) => (
 									<>
 										<div className="flex h-fit w-11/12 flex-row items-center justify-between">
 											<div className="flex flex-row items-center justify-between">
-												<p className="text-base text-primary">{anime}</p>
+												<p className="text-primary text-base">{anime}</p>
 											</div>
 											<button
 												onClick={() => {
@@ -455,7 +465,7 @@ export default function Home() {
 														seriesFilter.includes(anime)
 															? "bi-check-square-fill"
 															: "bi-square"
-													} text-2xl/[0] text-primary`}
+													} text-primary text-2xl/[0]`}
 												></i>
 											</button>
 										</div>
@@ -464,7 +474,7 @@ export default function Home() {
 											x.toLowerCase().includes(seriesQuery.toLowerCase())
 										).length -
 											1 ? (
-											<hr className="my-1 w-11/12 border-primary" />
+											<hr className="border-primary my-1 w-11/12" />
 										) : (
 											<></>
 										)}
@@ -474,20 +484,20 @@ export default function Home() {
 						</Accordion.Item>
 						<Accordion.Item
 							value="4"
-							className="flex flex-col gap-1 data-open:h-auto data-open:gap-2"
+							className="data-open:h-auto data-open:gap-2 flex flex-col gap-1"
 						>
 							<Accordion.Trigger className="group flex flex-row items-center">
-								<p className="text-2xl font-bold text-primary">Character</p>
+								<p className="text-primary text-2xl font-bold">Character</p>
 								<i
-									className={`bi bi-chevron-up ml-auto text-2xl/[0] text-primary transition-transform duration-400 group-data-open:rotate-180`}
+									className={`bi bi-chevron-up text-primary duration-400 group-data-open:rotate-180 ml-auto text-2xl/[0] transition-transform`}
 								></i>
 							</Accordion.Trigger>
 							<Accordion.Content className="flex flex-col gap-1">
-								<div className="flex w-11/12 flex-row items-center rounded-md bg-primary pl-2">
-									<i className="bi bi-search text-center text-lg text-background"></i>
+								<div className="bg-primary flex w-11/12 flex-row items-center rounded-md pl-2">
+									<i className="bi bi-search text-background text-center text-lg"></i>
 									<input
 										type="text"
-										className="h-10 w-full rounded-md bg-primary px-2 text-base text-background placeholder:text-background placeholder:opacity-50 focus:outline-none"
+										className="bg-primary text-background placeholder:text-background h-10 w-full rounded-md px-2 text-base placeholder:opacity-50 focus:outline-none"
 										placeholder="Character"
 										onChange={(e) => {
 											setCharacterFilter(e.target.value);
@@ -498,20 +508,20 @@ export default function Home() {
 						</Accordion.Item>
 						<Accordion.Item
 							value="5"
-							className="flex flex-col gap-1 data-open:h-auto"
+							className="data-open:h-auto flex flex-col gap-1"
 						>
 							<Accordion.Trigger className="group flex flex-row items-center">
-								<p className="text-2xl font-bold text-primary">Card No</p>
+								<p className="text-primary text-2xl font-bold">Card No</p>
 								<i
-									className={`bi bi-chevron-up ml-auto text-2xl/[0] text-primary transition-transform duration-400 group-data-open:rotate-180`}
+									className={`bi bi-chevron-up text-primary duration-400 group-data-open:rotate-180 ml-auto text-2xl/[0] transition-transform`}
 								></i>
 							</Accordion.Trigger>
 							<Accordion.Content className="flex flex-col gap-1">
-								<div className="flex w-11/12 flex-row items-center rounded-md bg-primary pl-2">
-									<i className="bi bi-search text-center text-lg text-background"></i>
+								<div className="bg-primary flex w-11/12 flex-row items-center rounded-md pl-2">
+									<i className="bi bi-search text-background text-center text-lg"></i>
 									<input
 										type="text"
-										className="h-10 w-full rounded-md bg-primary px-2 text-base text-background placeholder:text-background placeholder:opacity-50 focus:outline-none"
+										className="bg-primary text-background placeholder:text-background h-10 w-full rounded-md px-2 text-base placeholder:opacity-50 focus:outline-none"
 										placeholder="Card No"
 										onChange={(e) => {
 											setCardNoFilter(e.target.value);
@@ -524,7 +534,7 @@ export default function Home() {
 
 					<div className="mb-4 flex h-12 w-11/12 flex-row gap-2">
 						<button
-							className="h-full w-1/2 rounded-md bg-primary text-lg font-bold text-background focus:outline-none"
+							className="bg-primary text-background h-full w-1/2 rounded-md text-lg font-bold focus:outline-none"
 							onClick={() => {
 								filterCards();
 							}}
@@ -532,7 +542,7 @@ export default function Home() {
 							Filter
 						</button>
 						<button
-							className="h-full w-1/2 rounded-md bg-primary text-lg font-bold text-background focus:outline-none disabled:opacity-50"
+							className="bg-primary text-background h-full w-1/2 rounded-md text-lg font-bold focus:outline-none disabled:opacity-50"
 							onClick={() => {
 								resetFilters();
 							}}
@@ -580,7 +590,7 @@ function Card({ cardDetails }) {
 		//   </div>
 		// </main>
 
-		<main className="relative flex aspect-potrait w-full flex-col gap-2.5 overflow-hidden rounded bg-card-bg pb-5 pl-5 pr-5 pt-5 shadow-card">
+		<main className="bg-card-bg relative flex aspect-potrait w-full flex-col gap-2.5 overflow-hidden rounded pb-5 pl-5 pr-5 pt-5 shadow-card">
 			{image === null ? (
 				<div className="z-0 aspect-card w-full bg-gray-200"></div>
 			) : (
@@ -592,14 +602,14 @@ function Card({ cardDetails }) {
 				/>
 			)}
 			<div className="flex w-full flex-1 flex-col items-center justify-center">
-				<p className="h-fit w-full text-ellipsis text-center text-md font-bold text-text">
+				<p className="text-md text-text h-fit w-full text-ellipsis text-center font-bold">
 					{name}
 				</p>
-				<p className="h-fit w-full text-ellipsis text-center text-sm font-light text-text">
+				<p className="text-text h-fit w-full text-ellipsis text-center text-sm font-light">
 					{animeName}
 				</p>
 			</div>
-			<div className="absolute left-rarity top-8 flex h-1/9 w-full -rotate-45 items-center justify-center bg-gold/[0.9]">
+			<div className="left-rarity h-1/9 bg-gold/[0.9] absolute top-8 flex w-full -rotate-45 items-center justify-center">
 				<p className="text-3xl font-bold text-white">{rarity}</p>
 			</div>
 		</main>
