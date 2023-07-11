@@ -30,11 +30,14 @@ module.exports = {
 				"1/8": "12.5%",
 				"1/7vw": "calc(100vw / 7)",
 				"1/12vw": "calc(100vw / 12)",
+				"1/2vw": "calc(100vw / 2)",
+				"2/3vw": "calc(100vw / 3 * 2)",
 			},
 			height: {
 				"1/9": "11.1111111111%",
 				"1/15": "6.6666666667%",
 				"1/15vh": "calc(100vh / 15)",
+				"1/10vh": "calc(100vh / 10)",
 				sideBar: "calc(100vh - 7rem)",
 				sideBarContent: "calc(100vh - 7rem - 3rem)",
 			},
@@ -74,6 +77,7 @@ module.exports = {
 			transitionDuration: {
 				400: "400ms",
 			},
+			screens: {},
 		},
 		plugins: [],
 	},

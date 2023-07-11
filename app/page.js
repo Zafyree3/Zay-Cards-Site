@@ -217,16 +217,13 @@ export default function Home() {
 			ref={mainBody}
 			className="theme-blue flex w-full flex-col items-center bg-background"
 		>
-			<header className="z-20 flex h-28 w-full flex-row items-center justify-center bg-primary">
-				<div
-					id="control-panel"
-					className="absolute left-1/24 top-14 flex h-fit w-fit -translate-y-1/2 gap-8"
-				>
+			<header className="z-20 flex h-28 w-full flex-row items-center justify-evenly bg-primary">
+				<div className="relative flex h-auto gap-2">
 					<Popover className="relative">
 						<Popover.Button className="aspect-square rounded-md p-2 outline outline-1 outline-white">
-							<i className="bi bi-palette2 inline-block text-2xl/[0] text-white"></i>
+							<i className="bi bi-palette2 inline-block text-xl/[0] text-white"></i>
 						</Popover.Button>
-						<Popover.Panel className="absolute mt-3 w-1/7vw rounded-md bg-white p-3 shadow-popup">
+						<Popover.Panel className="absolute mt-3 w-2/3vw rounded-md bg-white p-3 shadow-popup">
 							<RadioGroup
 								value={theme}
 								onChange={setTheme}
@@ -239,11 +236,11 @@ export default function Home() {
 									<RadioGroup.Option
 										key={theme.name}
 										value={theme.value}
-										className={`${theme.value} flex h-1/15vh flex-row rounded-sm bg-background px-3 py-1 outline outline-2 outline-offset-1 outline-primary`}
+										className={`${theme.value} flex h-1/10vh flex-row rounded-sm bg-background px-3 py-1 outline outline-2 outline-offset-1 outline-primary`}
 									>
 										{({ checked }) => (
 											<>
-												<div className="flex h-full w-2/3 flex-col items-start justify-center ">
+												<div className="flex h-full w-2/3 flex-col items-start justify-center">
 													<p className="text-lg font-bold text-primary">
 														{theme.name}
 													</p>
@@ -272,7 +269,7 @@ export default function Home() {
 						id="filter-button"
 					>
 						<i
-							className="bi bi-funnel-fill inline-block text-2xl/[0] text-white"
+							className="bi bi-funnel-fill inline-block text-xl/[0] text-white"
 							id="filter-button"
 						></i>
 					</button>
@@ -289,8 +286,8 @@ export default function Home() {
 				}}
 			>
 				<div
-					className={`absolute flex h-sideBar w-1/6 flex-col px-7 py-4 transition-position duration-1000 ${
-						revealSideNav ? "left-0" : "-left-1/4"
+					className={`absolute flex h-sideBar w-full flex-col px-7 py-4 transition-position duration-1000 ${
+						revealSideNav ? "left-0" : "-left-full"
 					} top-28 z-10 rounded-br-lg border-b-3 border-r-3 border-primary bg-background text-text shadow-sideBar`}
 				>
 					<p className="flex h-12 w-full flex-shrink-0 justify-center text-center text-3xl font-bold text-primary">
@@ -498,7 +495,7 @@ export default function Home() {
 						</Accordion.Item>
 					</Accordion.Root>
 
-					<div className="flex h-12 w-11/12 flex-row gap-2">
+					<div className="mb-4 flex h-12 w-11/12 flex-row gap-2">
 						<button
 							className="h-full w-1/2 rounded-md bg-primary text-lg font-bold text-background focus:outline-none"
 							onClick={() => {
@@ -525,7 +522,7 @@ export default function Home() {
 					</div>
 				</div>
 			</ClickAwayListener>
-			<main className="z-0 grid h-fit w-11/12 grid-cols-6 grid-rows-5 gap-5 py-3">
+			<main className="z-0 grid h-fit w-11/12 grid-cols-2 grid-rows-5 gap-5 py-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
 				{filteredCards.map((card, index) => {
 					return index === filteredCards.length - 1 ? (
 						<div ref={observee}>
