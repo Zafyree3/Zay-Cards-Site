@@ -185,7 +185,6 @@ export default function Home() {
 
 		const observer = new IntersectionObserver(([entry]) => {
 			if (entry.intersectionRatio > 0) {
-				console.log("Last card intersecting");
 				setIsLastCardIntersecting(true);
 			}
 		});
@@ -200,14 +199,11 @@ export default function Home() {
 	useEffect(() => {
 		// Load more cards
 		if (isLastCardIntersecting) {
-			console.log("ran");
 			setIsLastCardIntersecting(false);
 
 			if (amountLoaded > cardDetails.length) {
 				return;
 			}
-
-			console.log("Loading more cards");
 
 			setAmountLoaded(amountLoaded + 7);
 		}
@@ -434,7 +430,6 @@ export default function Home() {
 										className="h-10 w-full rounded-md bg-primary px-2 text-base text-background placeholder:text-background placeholder:opacity-50 focus:outline-none"
 										placeholder="Search"
 										onChange={(e) => {
-											console.log(e.target.value);
 											setSeriesQuery(e.target.value);
 										}}
 										id="AnimeSearch"
