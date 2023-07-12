@@ -4,11 +4,10 @@ import { useEffect, useState, useRef } from "react";
 import Axios from "axios";
 import "./globals.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
-import { Popover, RadioGroup, Combobox } from "@headlessui/react";
+import { Popover, RadioGroup } from "@headlessui/react";
 import { ClickAwayListener } from "@mui/base";
 import { themes, sets, rarities, series } from "./values";
 import * as Accordion from "@radix-ui/react-accordion";
-import e from "cors";
 
 export default function Home() {
 	const [data, setData] = useState([]);

@@ -1,34 +1,52 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Zay Card Shops
 
-## Getting Started
+_This is just a website I created to display my cards collection_
 
-First, run the development server:
+## What is used to create this
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-```
+- React
+  - Main framework I used to do the frontend
+  - Really love the javascript and html combination
+  - Being able to create components helps with repeated elements
+- Next.js
+  - This is how I ran React
+  - Very easy to test on localhost with functions like "npm run dev"
+  - Create compatibility with Vercel
+- Express JS
+  - This is how the backend is ran
+  - Very easy to use and setup
+  - Works suprisingly with Vercel to create a API
+- Vercel
+  - Making deploying the website very easy
+  - It is basically free
+  - Handles domains very easily
+- Notion
+  - The database for the cards
+  - Easy to use since I have experience with it
+  - The data that comes from the api requires lots of cleaning to use
+  - Difficult to create and update the database
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Resources Used
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+- Tailwind CSS
+  - This was used to handle all the design, layouting and responsiveness of the site
+  - Tailwind just feels more superior than bootstrap, unless you are using BS5 for the components
+- HeadlessUI
+  - A really nice unstyled component library for React
+  - Provides functional and accessible components with great customizablitiy
+  - Problem is that it lacks in the variety of components
+- BaseUI
+  - A unstyled version of marterial UI
+  - Provides way more components and comes unstyled
+  - Lacks in components that HeadlessUI have
+- RadixUI
+  - Mainly used it for the accordian
+  - Another unstyled components libraries
+  - Has more that BaseUI but missing somethings that baseUI has
+- Bootstrap Icons
+  - While I used tailwind for design, I still need icons
+  - Bootstrap icons are great and have a wide variety of icons and is free
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+## What I learnt
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+I really improved on my React. Well not improve, per se, but gain a lot more knowledge when using React. I also learnt a new way to design, ie Tailwind CSS. It makes designing reponsive sites so much easier. Next time, use it, it is not a cheat, it saves so much time. I also learnt how capable Vercel is. It can not only just deploy frontend sites, but also backend API so yeah, will be abusing it since it is literally free to use. Next is Notion. If worst comes to worst, use it as a database, I ain't stopping you. But hear me out, trying to use it as a CRUD (create, read, update, delete) type of database is hard.
